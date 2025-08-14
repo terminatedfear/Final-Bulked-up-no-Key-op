@@ -1,0 +1,233 @@
+-- Services
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local hrp
+
+-- Update HRP on respawn
+local function updateCharacter()
+    local char = player.Character or player.CharacterAdded:Wait()
+    hrp = char:WaitForChild("HumanoidRootPart")
+end
+player.CharacterAdded:Connect(updateCharacter)
+updateCharacter()
+
+-- ======================
+-- WARNING GUI
+-- ======================
+local warningGui = Instance.new("ScreenGui")
+warningGui.Name = "Terminated_Fear_Warning"
+warningGui.Parent = playerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 400, 0, 200)
+frame.Position = UDim2.new(0.5, -200, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Parent = warningGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = frame
+
+local message = Instance.new("TextLabel")
+message.Size = UDim2.new(0.9,0,0.6,0)
+message.Position = UDim2.new(0.05,0,0.1,0)
+message.BackgroundTransparency = 1
+message.Text = "Hello To User! pls Notice this.\nOur script Is Unfinished.\nPls be patient Because this script Is Not Authorized.\n\nDo at your own Risk"
+message.TextColor3 = Color3.fromRGB(255,255,255)
+message.TextScaled = true
+message.TextWrapped = true
+message.Font = Enum.Font.Gotham
+message.Parent = frame
+
+local yesBtn = Instance.new("TextButton")
+yesBtn.Size = UDim2.new(0,150,0,40)
+yesBtn.Position = UDim2.new(0.1,0,0.7,0)
+yesBtn.Text = "Yes"
+yesBtn.BackgroundColor3 = Color3.fromRGB(0,170,255)
+yesBtn.TextColor3 = Color3.fromRGB(255,255,255)
+yesBtn.Font = Enum.Font.GothamBold
+yesBtn.TextSize = 18
+yesBtn.Parent = frame
+
+local yesCorner = Instance.new("UICorner")
+yesCorner.CornerRadius = UDim.new(0,8)
+yesCorner.Parent = yesBtn
+
+local noBtn = Instance.new("TextButton")
+noBtn.Size = UDim2.new(0,150,0,40)
+noBtn.Position = UDim2.new(0.55,0,0.7,0)
+noBtn.Text = "No"
+noBtn.BackgroundColor3 = Color3.fromRGB(200,0,0)
+noBtn.TextColor3 = Color3.fromRGB(255,255,255)
+noBtn.Font = Enum.Font.GothamBold
+noBtn.TextSize = 18
+noBtn.Parent = frame
+
+local noCorner = Instance.new("UICorner")
+noCorner.CornerRadius = UDim.new(0,8)
+noCorner.Parent = noBtn
+
+-- ======================
+-- TX Toggle Button
+-- ======================
+local toggleGui = Instance.new("ScreenGui")
+toggleGui.Name = "Terminated_Fear_Toggle"
+toggleGui.Parent = playerGui
+
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.new(0,50,0,50)
+toggleBtn.Position = UDim2.new(0.9,0,0.1,0)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(0,255,170)
+toggleBtn.Text = "TX"
+toggleBtn.TextColor3 = Color3.fromRGB(0,0,0)
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextScaled = true
+toggleBtn.BorderSizePixel = 0
+toggleBtn.Parent = toggleGui
+
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(1,0)
+toggleCorner.Parent = toggleBtn
+
+toggleBtn.Active = true
+toggleBtn.Draggable = true
+
+-- Script state
+local scriptLoaded = false
+local bulkedUpGui
+local guiVisible = false
+
+-- ======================
+-- AUTO COLLECT GUI
+-- ======================
+local function createAutoCollectGUI()
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "Terminated_Fear_Collect"
+    gui.Parent = game.CoreGui
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 300, 0, 200)
+    frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    frame.BorderSizePixel = 0
+    frame.Active = true
+    frame.Draggable = true
+    frame.Parent = gui
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = frame
+
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 30)
+    title.BackgroundTransparency = 1
+    title.Text = "Terminated_Fear Auto Collect"
+    title.TextColor3 = Color3.fromRGB(0, 255, 170)
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 18
+    title.Parent = frame
+
+    local collectBtn = Instance.new("TextButton")
+    collectBtn.Size = UDim2.new(0, 260, 0, 50)
+    collectBtn.Position = UDim2.new(0, 20, 0, 60)
+    collectBtn.Text = "Auto Collect All Materials"
+    collectBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    collectBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    collectBtn.Font = Enum.Font.GothamBold
+    collectBtn.TextSize = 18
+    collectBtn.Parent = frame
+
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 8)
+    btnCorner.Parent = collectBtn
+
+    local stopBtn = Instance.new("TextButton")
+    stopBtn.Size = UDim2.new(0, 260, 0, 50)
+    stopBtn.Position = UDim2.new(0, 20, 0, 120)
+    stopBtn.Text = "Stop Collecting"
+    stopBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    stopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    stopBtn.Font = Enum.Font.GothamBold
+    stopBtn.TextSize = 18
+    stopBtn.Parent = frame
+
+    local stopCorner = Instance.new("UICorner")
+    stopCorner.CornerRadius = UDim.new(0, 8)
+    stopCorner.Parent = stopBtn
+
+    local collecting = false
+
+    collectBtn.MouseButton1Click:Connect(function()
+        if collecting then return end
+        collecting = true
+        spawn(function()
+            while collecting do
+                for _, item in pairs(game.Workspace:GetDescendants()) do
+                    if item:IsA("Part") or item:IsA("MeshPart") or item:IsA("Model") then
+                        local nameLower = item.Name:lower()
+                        if nameLower:find("bomb") or nameLower:find("coin") or nameLower:find("gem") or nameLower:find("material") or nameLower:find("crate") or nameLower:find("box") then
+                            if hrp and hrp.Parent then
+                                local targetCFrame
+                                if item:IsA("Model") and item:FindFirstChild("PrimaryPart") then
+                                    targetCFrame = item.PrimaryPart.CFrame + Vector3.new(0,3,0)
+                                else
+                                    targetCFrame = item.CFrame + Vector3.new(0,3,0)
+                                end
+                                hrp.CFrame = targetCFrame
+                                wait(0.3)
+                            end
+                        end
+                    end
+                end
+                wait(0.5)
+            end
+        end)
+    end)
+
+    stopBtn.MouseButton1Click:Connect(function()
+        collecting = false
+    end)
+end
+
+-- ======================
+-- LOAD BULKED UP SCRIPTS
+-- ======================
+local function loadScripts()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/terminatedfear/Terminated_Fear-bulked-up-No-Key/refs/heads/main/Bulked%20up%20no%20Key%20%2B%20Op.txt"))()
+    bulkedUpGui = playerGui:WaitForChild("Terminated_Fear_BulkedUp", 10)
+    if bulkedUpGui then
+        bulkedUpGui.Enabled = true
+        guiVisible = true
+    end
+    scriptLoaded = true
+
+    task.wait(20)
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/terminatedfear/Part-2-of-Bulked-Up-No-key-Also-Collect-all-gems/refs/heads/main/Gems%20Collector.txt"))()
+
+    task.wait(10)
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/terminatedfear/Part-3-Of-bulked-up-scripts/refs/heads/main/Anti%20ragdoll%20an%20fixed%20auto%20Punch.txt"))()
+
+    -- Wait 5 seconds before auto collect GUI
+    task.wait(5)
+    createAutoCollectGUI()
+end
+
+-- WARNING BUTTON ACTIONS
+yesBtn.MouseButton1Click:Connect(function()
+    warningGui:Destroy()
+    spawn(loadScripts)
+end)
+
+noBtn.MouseButton1Click:Connect(function()
+    warningGui:Destroy()
+end)
+
+-- TX TOGGLE BUTTON LOGIC
+toggleBtn.MouseButton1Click:Connect(function()
+    if scriptLoaded and bulkedUpGui then
+        guiVisible = not guiVisible
+        bulkedUpGui.Enabled = guiVisible
+    end
+end)
